@@ -1,0 +1,20 @@
+my_project/
+│
+├── config.py
+├── models/
+│   ├── __init__.py
+│   ├── database.py
+│   ├── user.py
+│   ├── data.py
+│   ├── action_corrective.py
+│   ├── pluviometre_manuel.py
+│   ├── pluviometre_automatique.py
+│   ├── observateur.py
+│   └── station.py
+├── excel_processor.py
+├── gui/
+│   ├── __init__.py
+│   ├── main_window.py
+│   └── upload_dialog.py
+├── main.py
+└── requirements.txt
