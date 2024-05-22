@@ -1,5 +1,4 @@
-# gui/main_window.py
-from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QDialog, QLineEdit, QMessageBox, QHBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QDialog, QLineEdit, QMessageBox, QHBoxLayout, QTableWidget, QTableWidgetItem, QAbstractItemView
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from models.user import User
@@ -140,23 +139,42 @@ class VisualiseUsersDialog(QDialog):
         self.setWindowTitle('All Users')
         layout = QVBoxLayout()
 
-        self.users_list_label = QLabel('Users:')
-        layout.addWidget(self.users_list_label)
+        self.users_table = QTableWidget()
+        self.users_table.setColumnCount(5)
+        self.users_table.setHorizontalHeaderLabels(['Prenom', 'Nom', 'Login', 'Droit', 'Delete'])
+        self.users_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.users_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.users = User.get_all_users()
-        for user in self.users:
-            user_label = QLabel(f'{user["prenom"]} {user["nom"]} ({user["login"]}) - {user["droit"]}')
-            layout.addWidget(user_label)
+        self.users_table.setRowCount(len(self.users))
 
-            delete_btn = QPushButton('Delete', self)
-            delete_btn.clicked.connect(lambda _, u=user: self.delete_user(u))
-            layout.addWidget(delete_btn)
+        for row, user in enumerate(self.users):
+            self.users_table.setItem(row, 0, QTableWidgetItem(user['prenom']))
+            self.users_table.setItem(row, 1, QTableWidgetItem(user['nom']))
+            self.users_table.setItem(row, 2, QTableWidgetItem(user['login']))
+            self.users_table.setItem(row, 3, QTableWidgetItem(user['droit']))
+            delete_button = QPushButton('Delete')
+            delete_button.clicked.connect(lambda _, u=user: self.delete_user(u))
+            self.users_table.setCellWidget(row, 4, delete_button)
 
+        layout.addWidget(self.users_table)
         self.setLayout(layout)
 
     def delete_user(self, user):
         if User.delete_user(user["login"]):
             QMessageBox.information(self, 'Success', f'User {user["login"]} deleted successfully')
-            self.accept()
+            self.refresh_users_table()
         else:
             QMessageBox.warning(self, 'Error', f'Failed to delete user {user["login"]}')
+
+    def refresh_users_table(self):
+        self.users = User.get_all_users()
+        self.users_table.setRowCount(len(self.users))
+        for row, user in enumerate(self.users):
+            self.users_table.setItem(row, 0, QTableWidgetItem(user['prenom']))
+            self.users_table.setItem(row, 1, QTableWidgetItem(user['nom']))
+            self.users_table.setItem(row, 2, QTableWidgetItem(user['login']))
+            self.users_table.setItem(row, 3, QTableWidgetItem(user['droit']))
+            delete_button = QPushButton('Delete')
+            delete_button.clicked.connect(lambda _, u=user: self.delete_user(u))
+            self.users_table.setCellWidget(row, 4, delete_button)
