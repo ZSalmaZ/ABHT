@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QDialog, QLineEdit, QMessageBox, QHBoxLayout, QTableWidget, QTableWidgetItem, QAbstractItemView
+from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QWidget, QPushButton, QDialog, QLineEdit, QMessageBox, QHBoxLayout, QTableWidget, QTableWidgetItem, QAbstractItemView, QSizePolicy
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from models.user import User
@@ -137,6 +137,9 @@ class VisualiseUsersDialog(QDialog):
 
     def initUI(self):
         self.setWindowTitle('All Users')
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.resize(600, 400)  # Set initial size
+
         layout = QVBoxLayout()
 
         self.users_table = QTableWidget()
